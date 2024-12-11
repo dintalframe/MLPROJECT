@@ -1,0 +1,2 @@
+Best Parameters,Test Loss (MSE)
+"{'hidden_layers': 4, 'hidden_units': 100, 'learning_rate': 0.001, 'num_epochs': 1000}",0.9640335703905263
