@@ -15,7 +15,7 @@ import numpy as np
 
 # Load dataset from CSV file
 df = pd.read_csv('/mnt/c/Users/PVRL-01/OneDrive - University of North Carolina at Charlotte/Old_Files/Backup 09162020/Documents/Donald Intal/mlproj/output/compiled_features_cleaned.csv')
-
+#testing
 # Feature matrix (X) and target vector (y)
 X = df[['Rsh_(ohm-cm2)', 'Rs_(ohm-cm2)', 'n_at_1_sun', 'n_at_ 1/10_suns', 'Jo2_(A/cm2)']].values
 y = df['Efficiency_(percent)'].values
