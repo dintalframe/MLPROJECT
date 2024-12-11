@@ -1,0 +1,4 @@
+Metric,Value
+Training Accuracy (R²),0.6247133016586304
+Validation Accuracy (R²),0.630636990070343
+Final Training Loss,6.4832763671875
