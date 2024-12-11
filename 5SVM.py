@@ -10,7 +10,7 @@ import joblib
 
 # Load dataset from CSV file
 df = pd.read_csv('/mnt/c/Users/dinta/OneDrive/Desktop/mlproj/output/compiled_features_cleaned.csv')
-
+# adfasdfasf
 # Feature matrix (X) and target vector (y)
 X = df[['Rsh_(ohm-cm2)', 'Rs_(ohm-cm2)', 'n_at_1_sun', 'n_at_ 1/10_suns', 'Jo2_(A/cm2)']].values
 y = df['Efficiency_(percent)'].values
