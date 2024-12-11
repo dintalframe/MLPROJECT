@@ -71,8 +71,8 @@ class NeuralNet(nn.Module):
 input_size = X_train.shape[1]
 hidden_size = 64
 output_size = 1
-learning_rate = 0.01
-num_epochs = 100
+learning_rate = 0.001
+num_epochs = 1000
 
 # Create model, define loss function and optimizer
 model = NeuralNet(input_size, hidden_size, output_size).to(device)
