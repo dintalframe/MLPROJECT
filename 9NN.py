@@ -62,8 +62,8 @@ class NeuralNet(nn.Module):
         x = self.fc1(x)
         x = self.relu(x)
         x = self.fc2(x)
-        x = self.dropout(x)
         x = self.relu2(x)
+        x = self.dropout(x)
         x = self.fc3(x)
         return x
 
@@ -203,6 +203,8 @@ plt.bar(shap_importance_df['Feature'], shap_importance_df['SHAP Importance'], co
 plt.xlabel('Features', fontsize=16, fontweight='bold')
 plt.ylabel('SHAP Importance', fontsize=16, fontweight='bold')
 plt.title('Feature Importance Using SHAP', fontsize=16, fontweight='bold')
+plt.xticks(rotation=0, fontsize=12, fontweight='bold')
+plt.yticks(fontsize=12, fontweight='bold')
 shap_bar_plot_path = os.path.join(output_dir, 'shap_feature_importance_plot.png')
 plt.savefig(shap_bar_plot_path)
 print("SHAP feature importance plot saved to:", shap_bar_plot_path)
@@ -215,7 +217,7 @@ with torch.no_grad():
 
 # Plot Predicted vs True Efficiency
 plt.figure(figsize=(10, 6))
-plt.scatter(true_efficiency, predicted_efficiency, alpha=0.7, color='blue', label='Predicted vs True')
+plt.scatter(true_efficiency, predicted_efficiency, alpha=0.7, color='blue', label='Predicted')
 plt.tick_params(axis='both', which='major', labelsize=12)
 plt.plot([min(true_efficiency), max(true_efficiency)], [min(true_efficiency), max(true_efficiency)], color='red', linestyle='--', label='Ideal Prediction')
 plt.xlabel('True Efficiency (%)', fontsize=16, fontweight='bold')
