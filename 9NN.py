@@ -71,7 +71,7 @@ class NeuralNet(nn.Module):
 input_size = X_train.shape[1]
 hidden_size = 64
 output_size = 1
-learning_rate = 0.001
+learning_rate = 0.01
 num_epochs = 100
 
 # Create model, define loss function and optimizer
@@ -122,6 +122,14 @@ for epoch in tqdm(range(num_epochs), desc="Training Progress"):
         val_r2 = 1 - (torch.sum((y_val_tensor.to(device) - val_preds) ** 2) / torch.sum((y_val_tensor.to(device) - torch.mean(y_val_tensor.to(device))) ** 2))
         val_r2_scores.append(val_r2.item())
 
+# Save the final training loss to CSV and print to console
+final_training_loss = {'Metric': ['Final Training Loss'], 'Value': [train_losses[-1]]}
+final_loss_df = pd.DataFrame(final_training_loss)
+final_loss_csv_path = os.path.join(output_dir, 'final_training_loss.csv')
+final_loss_df.to_csv(final_loss_csv_path, index=False)
+print(f"Final Training Loss saved to: {final_loss_csv_path}")
+print("Final Training Loss:", train_losses[-1])
+
 # Plot Training and Validation Loss
 plt.figure(figsize=(10, 6))
 plt.plot(range(1, num_epochs + 1), train_losses, label='Training Loss', color='blue', linewidth=7)
@@ -164,12 +172,9 @@ print(f"Running SHAP on device: {device}")  # Debug statement
 explainer = shap.DeepExplainer(model, X_train_tensor.to(device))  # Use the entire training set
 shap_values = []
 print("Starting SHAP computation...")
-for i in range(X_val_tensor.size(0)):
+for i in tqdm(range(X_val_tensor.size(0)), desc="SHAP Progress"):
     single_shap_values = explainer.shap_values(X_val_tensor[i].unsqueeze(0).to(device))[0]
     shap_values.append(single_shap_values)
-    # Print progress every 10 samples
-    if (i + 1) % 10 == 0 or (i + 1) == X_val_tensor.size(0):
-        print(f"Processed {i + 1}/{X_val_tensor.size(0)} samples for SHAP values.")
 shap_values = np.squeeze(np.array(shap_values), axis=-1)  # Remove the last dimension
 print("SHAP computation completed.")  # Compute SHAP values for all validation samples
 
@@ -191,12 +196,6 @@ shap_importance_df = pd.DataFrame({
 shap_importance_csv_path = os.path.join(output_dir, 'shap_feature_importance.csv')
 shap_importance_df.to_csv(shap_importance_csv_path, index=False)
 print("SHAP feature importance saved to:", shap_importance_csv_path)
-
-# Feature Importance Summary Plot Using SHAP
-#shap.summary_plot(shap_values, X_val_scaled, feature_names=['Rsh_(ohm-cm2)', 'Rs_(ohm-cm2)', 'n_at_1_sun', 'n_at_ 1/10_suns', 'Jo2_(A/cm2)'])
-#shap_summary_plot_path = os.path.join(output_dir, 'shap_summary_plot.png')
-#plt.savefig(shap_summary_plot_path)
-#print("SHAP summary plot saved to:", shap_summary_plot_path)
 
 # Feature Importance Bar Plot Using SHAP
 plt.figure(figsize=(10, 6))
