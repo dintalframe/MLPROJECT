@@ -1,7 +1,0 @@
-Metric,Value
-Training R² Score,0.9690138101577759
-Validation R² Score,0.9591111540794373
-Training Accuracy (%),96.90138101577759
-Validation Accuracy (%),95.91111540794373
-Training Loss,3.5495534970752005
-Validation Loss,1.4285197366704594
