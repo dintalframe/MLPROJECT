@@ -14,7 +14,7 @@ import shap
 import numpy as np
 
 # Load dataset from CSV file
-df = pd.read_csv('/mnt/c/Users/PVRL-01/Desktop/Github/MLPROJECT/output/compiled_features_cleaned.csv')
+df = pd.read_csv('https://raw.githubusercontent.com/dintalframe/MLPROJECT/refs/heads/main/output/compiled_features_cleaned.csv')
 
 # Feature matrix (X) and target vector (y)
 X = df[['Rsh_(ohm-cm2)', 'Rs_(ohm-cm2)', 'n_at_1_sun', 'n_at_ 1/10_suns', 'Jo2_(A/cm2)']].values
@@ -49,33 +49,38 @@ val_loader = data_utils.DataLoader(val_dataset, batch_size=batch_size, shuffle=F
 
 # Define the neural network model
 class NeuralNet(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, output_size):
         super(NeuralNet, self).__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size)
+        self.fc1 = nn.Linear(input_size, 128)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.dropout = nn.Dropout(p=0.5)
+        self.dropout1 = nn.Dropout(p=0.3)
+        self.fc2 = nn.Linear(128, 64)
         self.relu2 = nn.ReLU()
-        self.fc3 = nn.Linear(hidden_size, output_size)
-    
+        self.dropout2 = nn.Dropout(p=0.3)
+        self.fc3 = nn.Linear(64, 32)
+        self.relu3 = nn.ReLU()
+        self.fc4 = nn.Linear(32, output_size)
+
     def forward(self, x):
         x = self.fc1(x)
         x = self.relu(x)
+        x = self.dropout1(x)
         x = self.fc2(x)
         x = self.relu2(x)
-        x = self.dropout(x)
+        x = self.dropout2(x)
         x = self.fc3(x)
+        x = self.relu3(x)
+        x = self.fc4(x)
         return x
 
 # Hyperparameters
 input_size = X_train.shape[1]
-hidden_size = 64
 output_size = 1
 learning_rate = 0.001
 num_epochs = 1000
 
 # Create model, define loss function and optimizer
-model = NeuralNet(input_size, hidden_size, output_size).to(device)
+model = NeuralNet(input_size, output_size).to(device)
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-4)
 
@@ -97,14 +102,14 @@ for epoch in tqdm(range(num_epochs), desc="Training Progress"):
         # Forward pass
         predictions = model(X_batch)
         loss = criterion(predictions, y_batch.view(-1, 1))
-        
+
         # Backward pass and optimization
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        
+
         epoch_train_loss += loss.item() * X_batch.size(0)
-    
+
     # Average training loss for the epoch
     epoch_train_loss /= len(train_loader.dataset)
     train_losses.append(epoch_train_loss)
