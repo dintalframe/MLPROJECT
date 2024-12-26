@@ -1,14 +1,24 @@
 import pandas as pd
+import os
 import logging
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-# Function to remove rows with any empty data, filter out specific values in Batch_ID, and handle outliers/negatives
-def remove_empty_rows_and_outliers(input_csv_path, output_csv_path):
+# Function to clean the dataset and save in the "output" folder
+def remove_empty_rows_and_outliers():
     try:
+        # Define input and output folders
+        input_folder = "outputunclean"
+        output_folder = "output"
+        input_file_name = "compiled_features.csv"
+        input_csv_path = os.path.join(input_folder, input_file_name)
+
+        # Create output folder if it doesn't exist
+        os.makedirs(output_folder, exist_ok=True)
+
         # Read the CSV file
-        logging.info(f"Reading input CSV file: {input_csv_path}")
+        logging.info(f"Reading input CSV file from: {input_csv_path}")
         df = pd.read_csv(input_csv_path)
 
         initial_row_count = len(df)
@@ -61,22 +71,18 @@ def remove_empty_rows_and_outliers(input_csv_path, output_csv_path):
             if col in df_cleaned.columns:
                 df_cleaned = handle_negative_values(df_cleaned, col)
 
-        # Save the cleaned DataFrame to the output CSV file
-        df_cleaned.to_csv(output_csv_path, index=False)
-        logging.info(f"Cleaned data saved to {output_csv_path}")
+        # Save the cleaned DataFrame to the "output" folder
+        output_file_path = os.path.join(output_folder, "compiled_features_cleaned.csv")
+        df_cleaned.to_csv(output_file_path, index=False)
+        logging.info(f"Cleaned data saved to {output_file_path}")
 
         # Generate a summary report
         final_row_count = len(df_cleaned)
         logging.info(f"Final row count: {final_row_count}")
         logging.info(f"Total rows removed: {initial_row_count - final_row_count}")
     except Exception as e:
-        logging.error(f"Error processing {input_csv_path}: {e}")
+        logging.error(f"Error processing the dataset: {e}")
 
 if __name__ == "__main__":
-    # Set the path to the input CSV file containing compiled features
-    input_csv_path = "/home/dintal/Desktop/Project/MLPROJECT/output/compiled_features.csv"
-    # Set the path for the output CSV file
-    output_csv_path = "/home/dintal/Desktop/Project/MLPROJECT/output/compiled_features_cleaned.csv"
-
     # Call the function to remove empty rows, unwanted Batch_ID rows, and extreme outliers
-    remove_empty_rows_and_outliers(input_csv_path, output_csv_path)
+    remove_empty_rows_and_outliers()
